@@ -10,8 +10,8 @@ public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity
         dbContext = _dbContext;
     }
 
-    public List<Entity> GetByParameter(Expression<Func<Entity, bool>> expression)
+    public IQueryable<Entity> GetByParameter(Expression<Func<Entity, bool>> expression)
     {
-        return dbContext.Set<Entity>().Where(expression.Compile()).ToList();
+        return dbContext.Set<Entity>().Where(expression.Compile()).AsQueryable();
     }
 }

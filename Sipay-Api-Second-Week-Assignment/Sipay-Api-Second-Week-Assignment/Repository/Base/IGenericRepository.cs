@@ -4,5 +4,5 @@ namespace Sipay_Api_Second_Week_Assignment;
 
 public interface IGenericRepository<Entity> where Entity : class
 {
-    List<Entity> GetByParameter(Expression<Func<Entity, bool>> expression);
+    IQueryable<Entity> GetByParameter(Expression<Func<Entity, bool>> expression);
 }

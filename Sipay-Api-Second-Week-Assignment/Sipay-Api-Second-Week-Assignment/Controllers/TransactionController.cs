@@ -16,9 +16,18 @@ public class TransactionController : ControllerBase
     [HttpGet("GetByParameter")]
     public IActionResult GetByParameter([FromQuery] TransactionQueryParameters parameters)
     {
-        //var entityList = repository.GetByParameter(x => (x.AccountNumber == parameters.AccountNumber) && (x.ReferenceNumber == parameters.ReferenceNumber) && ((x.CreditAmount > parameters.MinAmountCredit) && (x.CreditAmount < parameters.MaxAmountCredit)) && ((x.DebitAmount > parameters.MaxAmountDebit) && (x.DebitAmount < parameters.MaxAmountDebit)));
-        var entityList = repository.GetByParameter(x => (x.AccountNumber == parameters.AccountNumber));
+        // parameters içerisindeki tüm alanlar nulldan farklıysa GetByParameter'a istek atılacak şekilde bir şart eklendi
+        if (parameters.GetType().GetProperties().Any(prop => prop != null))
+        {
+            var entityList = repository.GetByParameter(x => (x.AccountNumber == parameters.AccountNumber) &&
+                    (x.ReferenceNumber == parameters.ReferenceNumber) &&
+                    ((x.CreditAmount > parameters.MinAmountCredit) || (x.CreditAmount < parameters.MaxAmountCredit)) &&
+                    ((x.DebitAmount > parameters.MinAmountDebit) || (x.DebitAmount < parameters.MaxAmountDebit)) &&
+                    ((x.TransactionDate > parameters.BeginDate) || (x.TransactionDate < parameters.EndDate)));
 
-        return Ok(entityList.ToList());
+            return Ok(entityList);
+        }
+        else { return BadRequest(); }
+
     }
 }
